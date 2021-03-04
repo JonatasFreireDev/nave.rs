@@ -2,7 +2,7 @@ import { DefaultTheme } from 'styled-components';
 
 const lightTheme: DefaultTheme = {
   theme: {
-    mainTheme: '#E5E5E5',
+    mainTheme: '#fff',
     secondTheme: '#212121, 100%',
   },
   button: {
