@@ -1,6 +1,7 @@
 import React from 'react';
 import { RouteProps, Route as OldRoute, Redirect } from 'react-router-dom';
 import { useAppSelector } from '../hooks/reduxHook';
+import NavBar from '../components/NavBar';
 
 interface RoutePropsInt extends RouteProps {
   isPrivate?: boolean;
@@ -12,13 +13,18 @@ const Route: React.FC<RoutePropsInt> = ({
   component: Component,
   ...rest
 }) => {
-  const user = useAppSelector(state => state.user);
+  const isSignIn = useAppSelector(state => state.user.isSignIn);
 
   return (
     <OldRoute
       {...rest}
       render={({ location }) => {
-        return isPrivate === !!user ? (
+        // eslint-disable-next-line no-nested-ternary
+        return isPrivate && isSignIn ? (
+          <NavBar>
+            <Component />
+          </NavBar>
+        ) : !isPrivate === !isSignIn ? (
           <Component />
         ) : (
           <Redirect

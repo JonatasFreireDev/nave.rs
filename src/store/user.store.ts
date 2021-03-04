@@ -2,10 +2,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../services/api';
 
 export interface userProps {
-  email: string;
-  id: string;
-  token: string;
-  status: string;
+  isLoading: boolean;
+  isSignIn: boolean;
+  data: {
+    email: string;
+    id: string;
+    token: string;
+  } | null;
 }
 
 export interface userSignInProps {
@@ -13,40 +16,50 @@ export interface userSignInProps {
   senha: string;
 }
 
+const initialState: userProps = JSON.parse(
+  localStorage.getItem('nave-user')!
+) || { isLoading: false, isSignIn: false };
+
 export const signInUser = createAsyncThunk(
   'user/signIn',
-  async (data: userSignInProps) => {
-    const response = await api.post('users/login', {
-      email: data.email,
-      password: data.senha,
-    });
-
-    return response.data;
+  async (data: userSignInProps, { rejectWithValue }) => {
+    try {
+      const response = await api.post('users/login', {
+        email: data.email,
+        password: data.senha,
+      });
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
   }
 );
-
-const initialState: userProps = {} as userProps;
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    signOut(state, action) {
-      state = {} as userProps;
+    signOut(state) {
+      state.data = null;
+      state.isSignIn = false;
+      localStorage.removeItem('nave-user');
     },
   },
   extraReducers: builder => {
     builder
-      .addCase(signInUser.pending, (state, action) => {
-        state.status = 'loading';
+      .addCase(signInUser.pending, state => {
+        state.isSignIn = false;
+        state.isLoading = true;
       })
       .addCase(signInUser.fulfilled, (state, action) => {
-        state = action.payload;
-        state.status = 'ok';
-        console.log(state);
+        state.data = action.payload;
+        state.isSignIn = true;
+        state.isLoading = false;
+        localStorage.setItem('nave-user', JSON.stringify(state));
       })
-      .addCase(signInUser.rejected, (state, action) => {
-        state.status = 'fail';
+      .addCase(signInUser.rejected, state => {
+        state.isSignIn = false;
+        state.isLoading = false;
       });
   },
 });
