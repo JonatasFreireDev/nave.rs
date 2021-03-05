@@ -9,9 +9,11 @@ export const Container = styled.div`
   align-items: center;
   height: 70vh;
   min-width: 100% !important;
+
   p {
     text-align: center;
   }
+
   span {
     margin-top: 10px;
     font-size: 16px;

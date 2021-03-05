@@ -7,7 +7,7 @@ import ErrorMessage from '../components/ErrorMessage';
 
 import Login from '../pages/Login';
 import Dashboard from '../pages/Dashboard';
-import NewNaver from '../pages/NewNaver';
+import NewNaver from '../pages/CreateNaver';
 
 const Routes: React.FC = () => {
   return (
