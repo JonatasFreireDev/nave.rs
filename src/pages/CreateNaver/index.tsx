@@ -6,13 +6,14 @@ import * as Yup from 'yup';
 import { Form } from '@unform/web';
 import { useHistory } from 'react-router-dom';
 import { SubmitHandler, FormHandles } from '@unform/core';
-import { toast } from 'react-toastify';
 import { MdNavigateBefore } from 'react-icons/md';
+import { useModal } from 'react-simple-hook-modal';
 import Input from '../../components/Input';
+import ModalInfo from '../../components/Modal/Info';
 import * as S from './styles';
 import getValidadtionErrors from '../../utils/getValidadtionErrors';
 import { postNaverAPI } from '../../utils/getDataFromApi';
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHook';
+import { useAppSelector } from '../../hooks/reduxHook';
 
 interface SignUpFormData {
   name: string;
@@ -27,15 +28,20 @@ const NewNaver: React.FC = () => {
   const token = useAppSelector(state => state.user.data?.token);
   const formRef = useRef<FormHandles>(null);
   const history = useHistory();
+  const { openModal, isModalOpen, closeModal } = useModal();
   const [isLoading, setisLoading] = useState(false);
+  const [modalMessage, setModalMessage] = useState({
+    title: '',
+    customMessage: '',
+  });
 
   const handleFormSubmit: SubmitHandler<SignUpFormData> = useCallback(
     async (data, { reset }) => {
       formRef.current?.setErrors({});
+      setisLoading(true);
+
       try {
         const reg = new RegExp(/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/);
-
-        setisLoading(true);
         const schema = Yup.object().shape({
           name: Yup.string().required('Informe o nome'),
           birthdate: Yup.string()
@@ -55,25 +61,39 @@ const NewNaver: React.FC = () => {
           abortEarly: false,
         });
 
-        console.log(data);
-
-        const dataResponse = await postNaverAPI({
+        const { data: dataResponse } = await postNaverAPI({
           dataForm: data,
           token,
+        }).catch(err => {
+          const { message } = JSON.parse(err.request.response);
+          throw new Error(message);
         });
 
-        toast.success('foi');
+        if (!dataResponse) {
+          throw new Error('Ocorreu algum erro na requisição');
+        }
 
-        console.log(dataResponse);
+        setModalMessage({
+          title: 'Naver criado',
+          customMessage: 'Naver criado com sucesso!',
+        });
+
+        openModal();
+        reset();
+        setisLoading(false);
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidadtionErrors(err);
           formRef.current?.setErrors(errors);
         } else {
-          reset();
+          setModalMessage({
+            title: 'Ocorreu algum erro !',
+            customMessage: err.message,
+          });
+          openModal();
         }
+        setisLoading(false);
       }
-      setisLoading(false);
     },
     [token]
   );
@@ -100,8 +120,12 @@ const NewNaver: React.FC = () => {
             <Input type="text" label="Cargo" name="job_role" />
           </section>
           <section>
-            <Input type="text" label="Idade" name="birthdate" />
-            <Input type="text" label="Tempo de empresa" name="admission_date" />
+            <Input type="text" label="Data de Nascimento" name="birthdate" />
+            <Input
+              type="text"
+              label="Data de Adimissao da empresa"
+              name="admission_date"
+            />
           </section>
           <section>
             <Input type="text" label="Projetos que participou" name="project" />
@@ -112,6 +136,13 @@ const NewNaver: React.FC = () => {
           </S.Btn>
         </Form>
       </S.Content>
+
+      <ModalInfo
+        title={modalMessage.title}
+        customMessage={modalMessage.customMessage}
+        isModalOpen={isModalOpen}
+        closeModal={closeModal}
+      />
     </S.Container>
   );
 };

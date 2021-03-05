@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 
 import { useHistory } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHook';
+import { useAppSelector } from '../../hooks/reduxHook';
 import * as S from './styles';
 import { INaver } from '../../Interface/INavers';
 import ErrorMessage from '../../components/ErrorMessage';

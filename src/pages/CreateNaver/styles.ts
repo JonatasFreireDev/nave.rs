@@ -4,10 +4,17 @@ import Button from '../../components/Button';
 
 export const Container = styled.div`
   background: ${props => props.theme.theme.mainTheme};
+  height: calc(90vh - 85px);
   display: flex;
   justify-content: center;
   align-items: center;
   animation: ${appearFromRight} 1s;
+
+  @media (max-width: 600px) {
+    & {
+      height: 100%;
+    }
+  }
 `;
 
 export const Content = styled.div`
@@ -54,6 +61,15 @@ export const Content = styled.div`
       align-items: center;
       width: 100%;
       margin-bottom: 10px;
+
+      @media (max-width: 600px) {
+        & {
+          flex-direction: column;
+        }
+        & div:last-child {
+          margin-left: 0px !important;
+        }
+      }
 
       div {
         max-width: 300px;

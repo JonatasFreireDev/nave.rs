@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+import { AxiosResponse } from 'axios';
 import api from '../services/api';
 import { INaver } from '../Interface/INavers';
 
@@ -31,8 +32,8 @@ export const getNaversAPI = async ({ path, token }: getNaversProps) => {
 };
 
 export const postNaverAPI = async ({ dataForm, token }: postNaverApi) => {
-  const { data } = await api.post(`/navers`, dataForm, {
+  const response = await api.post<AxiosResponse>(`/navers`, dataForm, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return data;
+  return response;
 };
