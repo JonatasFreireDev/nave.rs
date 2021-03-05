@@ -1,37 +1,25 @@
-import React, { useCallback } from 'react';
-import { Modal } from 'react-simple-hook-modal';
+import React from 'react';
 
 import { MdClose } from 'react-icons/md';
 import * as S from './styles';
-import '../styles.css';
+
+import { useModal } from '../../../hooks/ModalContext';
 
 interface IModalProps {
   title: string;
   customMessage: string;
-  isModalOpen: boolean;
-  closeModal(): void;
 }
 
-const ModalInfo: React.FC<IModalProps> = ({
-  title,
-  customMessage,
-  isModalOpen,
-  closeModal,
-}) => {
+const ModalInfo: React.FC<IModalProps> = ({ title, customMessage }) => {
+  const { closeModal } = useModal();
   return (
-    <Modal
-      id="any-unique-identifier"
-      isOpen={isModalOpen}
-      modalClassName="modal"
-    >
-      <S.Container>
-        <header>
-          <span>{title}</span>
-          <MdClose size={18} onClick={() => closeModal()} />
-        </header>
-        <p>{customMessage}</p>
-      </S.Container>
-    </Modal>
+    <S.Container>
+      <header>
+        <span>{title}</span>
+        <MdClose size={18} onClick={() => closeModal()} />
+      </header>
+      <p>{customMessage}</p>
+    </S.Container>
   );
 };
 

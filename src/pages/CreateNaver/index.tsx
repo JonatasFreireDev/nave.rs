@@ -7,7 +7,7 @@ import { Form } from '@unform/web';
 import { useHistory } from 'react-router-dom';
 import { SubmitHandler, FormHandles } from '@unform/core';
 import { MdNavigateBefore } from 'react-icons/md';
-import { useModal } from 'react-simple-hook-modal';
+import { useModal } from '../../hooks/ModalContext';
 import Input from '../../components/Input';
 import ModalInfo from '../../components/Modal/Info';
 import * as S from './styles';
@@ -28,12 +28,8 @@ const NewNaver: React.FC = () => {
   const token = useAppSelector(state => state.user.data?.token);
   const formRef = useRef<FormHandles>(null);
   const history = useHistory();
-  const { openModal, isModalOpen, closeModal } = useModal();
+  const { openModal, setContentModal } = useModal();
   const [isLoading, setisLoading] = useState(false);
-  const [modalMessage, setModalMessage] = useState({
-    title: '',
-    customMessage: '',
-  });
 
   const handleFormSubmit: SubmitHandler<SignUpFormData> = useCallback(
     async (data, { reset }) => {
@@ -73,10 +69,12 @@ const NewNaver: React.FC = () => {
           throw new Error('Ocorreu algum erro na requisição');
         }
 
-        setModalMessage({
-          title: 'Naver criado',
-          customMessage: 'Naver criado com sucesso!',
-        });
+        setContentModal(
+          <ModalInfo
+            title="Naver criado"
+            customMessage="Naver criado com sucesso!"
+          />
+        );
 
         openModal();
         reset();
@@ -86,10 +84,12 @@ const NewNaver: React.FC = () => {
           const errors = getValidadtionErrors(err);
           formRef.current?.setErrors(errors);
         } else {
-          setModalMessage({
-            title: 'Ocorreu algum erro !',
-            customMessage: err.message,
-          });
+          setContentModal(
+            <ModalInfo
+              title="Ocorreu algum erro !"
+              customMessage={err.message}
+            />
+          );
           openModal();
         }
         setisLoading(false);
@@ -136,13 +136,6 @@ const NewNaver: React.FC = () => {
           </S.Btn>
         </Form>
       </S.Content>
-
-      <ModalInfo
-        title={modalMessage.title}
-        customMessage={modalMessage.customMessage}
-        isModalOpen={isModalOpen}
-        closeModal={closeModal}
-      />
     </S.Container>
   );
 };

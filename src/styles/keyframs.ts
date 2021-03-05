@@ -9,6 +9,13 @@ from{
   transform: translateX(0px);
 }`;
 
+export const appearFromNothing = keyframes`
+from{
+  opacity: 0;
+}to{
+  opacity: 1;
+}`;
+
 export const appearFromTop = keyframes`
 from{
   opacity: 0;

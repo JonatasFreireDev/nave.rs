@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import Button from '../../components/Button';
 import LoadingCircle from '../../components/LoadingCircle';
+import { appearFromNothing } from '../../styles/keyframs';
 
 export const Container = styled.div`
   display: flex;
@@ -39,4 +40,45 @@ export const ButtonNaver = styled(Button)`
 
 export const Loading = styled(LoadingCircle)`
   height: 50vh !important;
+`;
+
+export const Content = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+  animation: ${appearFromNothing} 0.5s;
+`;
+
+export const Naver = styled.section`
+  display: grid;
+  grid-template-rows: 300px 5px 5px 20px;
+  grid-template-columns: 300px;
+  grid-gap: 20px;
+  margin: 20px;
+
+  img {
+    width: 100%;
+  }
+
+  strong {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  span {
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  div {
+    svg {
+      cursor: pointer;
+
+      &:last-child {
+        margin-left: 10px;
+      }
+    }
+  }
 `;
