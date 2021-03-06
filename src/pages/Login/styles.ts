@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import LogoImg from '../../assets/logo.svg';
+import { appearFromTop } from '../../styles/keyframs';
 
 export const Container = styled.div`
   background: ${props => props.theme.theme.mainTheme};
@@ -20,6 +21,7 @@ export const Login = styled.div`
   height: 410px;
   padding: 32px;
   border: 1px solid black;
+  animation: ${appearFromTop} 0.7s;
 
   form {
     width: 100%;

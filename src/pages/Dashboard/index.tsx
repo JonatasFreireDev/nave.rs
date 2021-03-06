@@ -4,34 +4,37 @@ import React, { useEffect, useState, useCallback } from 'react';
 
 import { useHistory } from 'react-router-dom';
 import { MdEdit, MdDelete } from 'react-icons/md';
-// import { useModal } from 'react-simple-hook-modal';
-import { useAppSelector } from '../../hooks/reduxHook';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { useAppSelector, useAppDispatch } from '../../hooks/reduxHook';
+import { getNaversAPI } from '../../store/navers.store';
 import * as S from './styles';
-import { INaver } from '../../Interface/INavers';
 import ErrorMessage from '../../components/ErrorMessage';
-import { getNaversAPI } from '../../utils/getDataFromApi';
 import ConfirmExclude from '../../components/Modal/ConfirmExclude';
 import { useModal } from '../../hooks/ModalContext';
 
 const Dashboard: React.FC = () => {
   const token = useAppSelector(state => state.user.data?.token);
+  const navers = useAppSelector(state => state.navers.navers);
+  const isLoading = useAppSelector(state => state.navers.isLoading);
   const history = useHistory();
+  const dispatch = useAppDispatch();
   const { openModal, setContentModal } = useModal();
-  const [navers, setNavers] = useState<INaver[]>([]);
-  const [isLoading, setisLoading] = useState(true);
   const [isError, setisError] = useState();
 
   const getNavers = useCallback(async () => {
     try {
-      const data: INaver[] = await getNaversAPI({
-        path: 'navers',
-        token,
-      });
-      setNavers(data);
+      await dispatch(
+        getNaversAPI({
+          token,
+        })
+      )
+        .then(unwrapResult)
+        .catch(err => {
+          throw new Error(err);
+        });
     } catch (err) {
-      setisError(err.response.data.message);
+      setisError(err.message);
     }
-    setisLoading(false);
   }, []);
 
   useEffect(() => {
@@ -79,7 +82,12 @@ const Dashboard: React.FC = () => {
                     deleteNaver(naver.id);
                   }}
                 />
-                <MdEdit size={20} />
+                <MdEdit
+                  size={20}
+                  onClick={() => {
+                    goTo(`/updateNaver/${naver.id}`);
+                  }}
+                />
               </div>
             </S.Naver>
           ))}

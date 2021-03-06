@@ -63,7 +63,7 @@ const Login: React.FC = () => {
       <S.Login>
         <S.Logo />
         <Form ref={formRef} onSubmit={handleFormSubmit} noValidate>
-          <Input type="email" label="E-mail" name="email" />
+          <Input type="email" label="E-mail" name="email" autoFocus />
           <Input type="password" label="Senha" name="senha" />
           <Button isLoading={user.isLoading} type="submit">
             Entrar

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { AnyStyledComponent } from 'styled-components';
 import { useModal } from '../../hooks/ModalContext';
@@ -11,13 +11,14 @@ interface IModalProps {
 
 const MyModal: React.FC<IModalProps> = ({ className, children }) => {
   const { closeModal, statusModal } = useModal();
+
+  const closeModalFunc = useCallback(() => {
+    closeModal();
+  }, []);
+
   if (statusModal) {
     return (
-      <S.Container
-        onClick={e => {
-          closeModal();
-        }}
-      >
+      <S.Container onClick={closeModalFunc}>
         <S.Content
           className={className}
           onClick={e => {

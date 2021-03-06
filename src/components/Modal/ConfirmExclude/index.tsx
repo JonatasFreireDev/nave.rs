@@ -1,4 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { deleteNaverAPI } from '../../../store/navers.store';
+import { useAppSelector, useAppDispatch } from '../../../hooks/reduxHook';
 import { useModal } from '../../../hooks/ModalContext';
 import ModalInfo from '../Info';
 import * as S from './styles';
@@ -8,15 +11,30 @@ interface IModalProps {
 }
 
 const ConfirmeExclude: React.FC<IModalProps> = ({ idNaver }) => {
+  const token = useAppSelector(state => state.user.data?.token);
+  const dispatch = useAppDispatch();
   const { closeModal, setContentModal } = useModal();
 
-  const handleDeleteNaver = useCallback(() => {
-    setContentModal(
-      <ModalInfo
-        title="Naver criado"
-        customMessage="Naver criado com sucesso!"
-      />
-    );
+  const handleDeleteNaver = useCallback(async () => {
+    try {
+      await dispatch(deleteNaverAPI({ idNaver, token }))
+        .then(unwrapResult)
+        .then(() => {
+          setContentModal(
+            <ModalInfo
+              title="Naver excluído"
+              customMessage="Naver excluído com sucesso!"
+            />
+          );
+        })
+        .catch(err => {
+          throw new Error(err);
+        });
+    } catch (err) {
+      setContentModal(
+        <ModalInfo title="Ocorreu algum erro !" customMessage={err.message} />
+      );
+    }
   }, []);
 
   const closeModalFunc = useCallback(() => {

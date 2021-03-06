@@ -13,6 +13,11 @@ interface postNaverApi {
   token?: string;
 }
 
+interface getNaverApi {
+  id: string;
+  token?: string;
+}
+
 interface SignUpFormData {
   name: string;
   birthdate: string;
@@ -26,6 +31,13 @@ interface SignUpFormData {
 
 export const getNaversAPI = async ({ path, token }: getNaversProps) => {
   const { data } = await api.get<INaver[]>(`${path}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return data;
+};
+
+export const getNaverAPI = async ({ id, token }: getNaverApi) => {
+  const { data } = await api.get<INaver>(`/navers/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return data;

@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import userReducer from './user.store';
+import naversReducer from './navers.store';
 
 const store = configureStore({
   reducer: {
     user: userReducer,
+    navers: naversReducer,
   },
 });
 
