@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable camelcase */
-import React, { useRef, useCallback, useState } from 'react';
+import React, { useRef, useCallback } from 'react';
 
 import * as Yup from 'yup';
 import { Form } from '@unform/web';
@@ -8,12 +8,13 @@ import { useHistory } from 'react-router-dom';
 import { SubmitHandler, FormHandles } from '@unform/core';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { MdNavigateBefore } from 'react-icons/md';
-import { postNaverAPI } from '../../store/navers.store';
+import { postNaverStore } from '../../store/navers.store';
 import { useModal } from '../../hooks/ModalContext';
 import Input from '../../components/Input';
 import ModalInfo from '../../components/Modal/Info';
 import * as S from './styles';
 import getValidadtionErrors from '../../utils/getValidadtionErrors';
+import { validationNaverYupForm } from '../../utils/validationYup';
 import { useAppSelector, useAppDispatch } from '../../hooks/reduxHook';
 
 interface SignUpFormData {
@@ -26,39 +27,21 @@ interface SignUpFormData {
 }
 
 const NewNaver: React.FC = () => {
-  const token = useAppSelector(state => state.user.data?.token);
+  const token = useAppSelector(state => state.user.data?.token!);
   const isLoading = useAppSelector(state => state.navers.isLoading);
   const formRef = useRef<FormHandles>(null);
   const history = useHistory();
   const dispatch = useAppDispatch();
-  const { openModal, setContentModal } = useModal();
+  const { setContentModal } = useModal();
 
   const handleFormSubmit: SubmitHandler<SignUpFormData> = useCallback(
     async (data, { reset }) => {
       formRef.current?.setErrors({});
       try {
-        const reg = new RegExp(/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/);
-        const schema = Yup.object().shape({
-          name: Yup.string().required('Informe o nome'),
-          birthdate: Yup.string()
-            .required('Informe sua data de nascimento')
-            .matches(reg, 'Informe o formato correto(dd/mm/yyyy)'),
-          project: Yup.string().required('Informe os projetos'),
-          job_role: Yup.string().required('Informe o trabalho'),
-          admission_date: Yup.string()
-            .required('Informe a data de admissao')
-            .matches(reg, 'Informe o formato correto(dd/mm/yyyy)'),
-          url: Yup.string()
-            .required('Insira uma url de uma foto')
-            .min(4, 'minimo 4 characteres'),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
+        await validationNaverYupForm(data);
 
         await dispatch(
-          postNaverAPI({
+          postNaverStore({
             dataForm: data,
             token,
           })
@@ -71,7 +54,6 @@ const NewNaver: React.FC = () => {
                 customMessage="Naver criado com sucesso!"
               />
             );
-            openModal();
             reset();
           })
           .catch(() => {
@@ -88,11 +70,10 @@ const NewNaver: React.FC = () => {
               customMessage={err.message}
             />
           );
-          openModal();
         }
       }
     },
-    [token]
+    []
   );
 
   const goTo = useCallback(() => {

@@ -1,45 +1,40 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-nested-ternary */
 import React, { useEffect, useState, useCallback } from 'react';
 
 import { useHistory } from 'react-router-dom';
 import { MdEdit, MdDelete } from 'react-icons/md';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useAppSelector, useAppDispatch } from '../../hooks/reduxHook';
-import { getNaversAPI } from '../../store/navers.store';
+import { getNaversStore } from '../../store/navers.store';
 import * as S from './styles';
-import ErrorMessage from '../../components/ErrorMessage';
 import ConfirmExclude from '../../components/Modal/ConfirmExclude';
+import NaverInfo from '../../components/Modal/NaverInfo';
 import { useModal } from '../../hooks/ModalContext';
+import LoadComponent from '../../components/LoadComponent';
 
 const Dashboard: React.FC = () => {
-  const token = useAppSelector(state => state.user.data?.token);
   const navers = useAppSelector(state => state.navers.navers);
+  const token = useAppSelector(state => state.user.data?.token);
   const isLoading = useAppSelector(state => state.navers.isLoading);
   const history = useHistory();
   const dispatch = useAppDispatch();
-  const { openModal, setContentModal } = useModal();
+  const { setContentModal } = useModal();
   const [isError, setisError] = useState();
-
-  const getNavers = useCallback(async () => {
-    try {
-      await dispatch(
-        getNaversAPI({
-          token,
-        })
-      )
-        .then(unwrapResult)
-        .catch(err => {
-          throw new Error(err);
-        });
-    } catch (err) {
-      setisError(err.message);
-    }
-  }, []);
 
   useEffect(() => {
     getNavers();
-  }, [getNavers]);
+  }, []);
+
+  const getNavers = useCallback(async () => {
+    await dispatch(getNaversStore({ token }))
+      .then(unwrapResult)
+      .catch(err => {
+        setisError(err.message);
+      });
+  }, []);
 
   const goTo = useCallback((path: string) => {
     history.push(path);
@@ -47,7 +42,10 @@ const Dashboard: React.FC = () => {
 
   const deleteNaver = useCallback((id: string) => {
     setContentModal(<ConfirmExclude idNaver={id} />);
-    openModal();
+  }, []);
+
+  const openInfo = useCallback((id: string) => {
+    setContentModal(<NaverInfo idNaver={id} />);
   }, []);
 
   return (
@@ -62,37 +60,47 @@ const Dashboard: React.FC = () => {
           Adicionar Naver
         </S.ButtonNaver>
       </header>
-      {isLoading ? (
-        <S.Loading />
-      ) : isError ? (
-        <ErrorMessage message={isError} />
-      ) : navers.length === 0 ? (
-        <h2>Não há nenhum Naver cadastrado !</h2>
-      ) : (
-        <S.Content>
-          {navers.map(naver => (
-            <S.Naver key={naver.id}>
-              <img src={naver.url} alt={naver.name} />
-              <strong>{naver.name}</strong>
-              <span>{naver.job_role}</span>
-              <div>
-                <MdDelete
-                  size={20}
+      <LoadComponent isLoading={isLoading} isError={isError}>
+        {navers.length === 0 ? (
+          <h2>Não há nenhum Naver cadastrado !</h2>
+        ) : (
+          <S.Content>
+            {navers.map(naver => (
+              <S.Naver key={naver.id}>
+                <img
                   onClick={() => {
-                    deleteNaver(naver.id);
+                    openInfo(naver.id);
                   }}
+                  src={naver.url}
+                  alt={naver.name}
                 />
-                <MdEdit
-                  size={20}
+                <strong
                   onClick={() => {
-                    goTo(`/updateNaver/${naver.id}`);
+                    openInfo(naver.id);
                   }}
-                />
-              </div>
-            </S.Naver>
-          ))}
-        </S.Content>
-      )}
+                >
+                  {naver.name}
+                </strong>
+                <span>{naver.job_role}</span>
+                <div>
+                  <MdDelete
+                    size={20}
+                    onClick={() => {
+                      deleteNaver(naver.id);
+                    }}
+                  />
+                  <MdEdit
+                    size={20}
+                    onClick={() => {
+                      goTo(`/updateNaver/${naver.id}`);
+                    }}
+                  />
+                </div>
+              </S.Naver>
+            ))}
+          </S.Content>
+        )}
+      </LoadComponent>
     </S.Container>
   );
 };

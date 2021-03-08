@@ -51,7 +51,7 @@ export const Content = styled.div`
   animation: ${appearFromNothing} 0.5s;
 `;
 
-export const Naver = styled.section`
+export const Naver = styled.div`
   display: grid;
   grid-template-rows: 300px 5px 5px 20px;
   grid-template-columns: 300px;
@@ -59,10 +59,14 @@ export const Naver = styled.section`
   margin: 20px;
 
   img {
-    width: 100%;
+    cursor: pointer;
+    margin: auto;
+    max-width: 100%;
+    max-height: 100%;
   }
 
   strong {
+    cursor: pointer;
     font-size: 16px;
     font-weight: 600;
   }

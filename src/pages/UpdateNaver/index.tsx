@@ -1,6 +1,4 @@
 /* eslint-disable import/no-duplicates */
-/* eslint-disable no-useless-escape */
-/* eslint-disable camelcase */
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 
 import * as Yup from 'yup';
@@ -11,7 +9,7 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { MdNavigateBefore } from 'react-icons/md';
 import { parseISO, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { putNaverAPI } from '../../store/navers.store';
+import { putNaverStore } from '../../store/navers.store';
 import { useModal } from '../../hooks/ModalContext';
 import Input from '../../components/Input';
 import ModalInfo from '../../components/Modal/Info';
@@ -20,6 +18,7 @@ import getValidadtionErrors from '../../utils/getValidadtionErrors';
 import { useAppSelector, useAppDispatch } from '../../hooks/reduxHook';
 import { getNaverAPI } from '../../utils/getDataFromApi';
 import { INaver } from '../../Interface/INavers';
+import { validationNaverYupForm } from '../../utils/validationYup';
 
 interface SignUpFormData {
   name: string;
@@ -35,13 +34,13 @@ interface RouteParams {
 }
 
 const NewNaver: React.FC = () => {
-  const token = useAppSelector(state => state.user.data?.token);
+  const token = useAppSelector(state => state.user.data?.token!);
   const isLoading = useAppSelector(state => state.navers.isLoading);
   const formRef = useRef<FormHandles>(null);
   const history = useHistory();
   const { id } = useParams<RouteParams>();
   const dispatch = useAppDispatch();
-  const { openModal, setContentModal } = useModal();
+  const { setContentModal } = useModal();
   const [thisNaver, setThisNaver] = useState<INaver>();
 
   useEffect(() => {
@@ -51,44 +50,28 @@ const NewNaver: React.FC = () => {
   const getNaver = useCallback(async () => {
     const responseThisNaver = await getNaverAPI({ id, token });
 
-    if (responseThisNaver) setThisNaver(responseThisNaver);
+    if (responseThisNaver) {
+      setThisNaver(responseThisNaver);
 
-    formRef.current?.setFieldValue(
-      'birthdate',
-      formatDate(responseThisNaver?.birthdate)
-    );
-    formRef.current?.setFieldValue(
-      'admission_date',
-      formatDate(responseThisNaver?.admission_date)
-    );
+      formRef.current?.setFieldValue(
+        'birthdate',
+        formatDate(responseThisNaver?.birthdate)
+      );
+      formRef.current?.setFieldValue(
+        'admission_date',
+        formatDate(responseThisNaver?.admission_date)
+      );
+    }
   }, [id]);
 
   const handleFormSubmit: SubmitHandler<SignUpFormData> = useCallback(
     async data => {
       formRef.current?.setErrors({});
       try {
-        const reg = new RegExp(/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/);
-        const schema = Yup.object().shape({
-          name: Yup.string().required('Informe o nome'),
-          birthdate: Yup.string().matches(
-            reg,
-            'Informe o formato correto(dd/mm/yyyy)'
-          ),
-          project: Yup.string(),
-          job_role: Yup.string(),
-          admission_date: Yup.string().matches(
-            reg,
-            'Informe o formato correto(dd/mm/yyyy)'
-          ),
-          url: Yup.string().min(4, 'minimo 4 characteres'),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
+        await validationNaverYupForm(data);
 
         await dispatch(
-          putNaverAPI({
+          putNaverStore({
             id,
             dataForm: data,
             token,
@@ -102,7 +85,6 @@ const NewNaver: React.FC = () => {
                 customMessage="Naver atualizado com sucesso!"
               />
             );
-            openModal();
           })
           .catch(err => {
             throw new Error('Erro ao atualizar o Naver! ');
@@ -118,7 +100,6 @@ const NewNaver: React.FC = () => {
               customMessage={err.message}
             />
           );
-          openModal();
         }
       }
     },

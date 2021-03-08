@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FaSpinner } from 'react-icons/fa';
+import { VscLoading } from 'react-icons/vsc';
 import { AnyStyledComponent } from 'styled-components';
 
 import Loader from './styles';
@@ -12,7 +12,7 @@ interface Loading {
 const LoadingCircle: React.FC<Loading> = ({ className }) => {
   return (
     <Loader className={className}>
-      <FaSpinner />
+      <VscLoading />
     </Loader>
   );
 };

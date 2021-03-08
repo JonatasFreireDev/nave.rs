@@ -1,41 +1,21 @@
 /* eslint-disable camelcase */
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import api from '../services/api';
+import {
+  getNaversAPI,
+  deleteNaverAPI,
+  postNaverAPI,
+  putNaverAPI,
+  IdeleteNaverApi,
+  IpostNaverApi,
+  IputNaverApi,
+  IgetNaversApi,
+} from '../services/naverService';
 
 import { INaver } from '../Interface/INavers';
 
 interface INaverStore {
   navers: INaver[];
   isLoading: boolean;
-}
-
-interface getNaversProps {
-  token?: string;
-}
-
-interface postNaverApi {
-  dataForm: SignUpFormData;
-  token?: string;
-}
-
-interface putNaverApi {
-  id: string;
-  dataForm: SignUpFormData;
-  token?: string;
-}
-
-interface deleteNaverApi {
-  idNaver: string;
-  token?: string;
-}
-
-interface SignUpFormData {
-  name?: string;
-  birthdate?: string;
-  project?: string;
-  job_role?: string;
-  admission_date?: string;
-  url?: string;
 }
 
 interface responseNaver {
@@ -54,44 +34,34 @@ const initialState: INaverStore = {
   isLoading: false,
 };
 
-export const getNaversAPI = createAsyncThunk(
+export const getNaversStore = createAsyncThunk(
   'naver/loadFromApi',
-  async ({ token }: getNaversProps) => {
-    const { data } = await api.get<INaver[]>(`/navers`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return data;
+  async ({ token }: IgetNaversApi) => {
+    const response = await getNaversAPI({ token });
+    return response;
   }
 );
 
-export const postNaverAPI = createAsyncThunk(
+export const postNaverStore = createAsyncThunk(
   'naver/createNaver',
-  async ({ dataForm, token }: postNaverApi) => {
-    const { data } = await api.post<responseNaver>(`/navers`, dataForm, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return data;
+  async ({ dataForm, token }: IpostNaverApi) => {
+    const response = await postNaverAPI({ dataForm, token });
+    return response;
   }
 );
 
-export const putNaverAPI = createAsyncThunk(
+export const putNaverStore = createAsyncThunk(
   'naver/updateNaver',
-  async ({ id, dataForm, token }: putNaverApi) => {
-    console.log(dataForm);
-    const { data } = await api.put(`/navers/${id}`, dataForm, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log(data);
-    return data;
+  async ({ dataForm, id, token }: IputNaverApi) => {
+    const response = await putNaverAPI({ dataForm, id, token });
+    return response;
   }
 );
 
-export const deleteNaverAPI = createAsyncThunk(
-  'naver/deleteNaver',
-  async ({ idNaver, token }: deleteNaverApi) => {
-    const { data } = await api.delete(`/navers/${idNaver}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+export const deleteNaverStore = createAsyncThunk(
+  'naver/deleteThisNaver',
+  async ({ idNaver, token }: IdeleteNaverApi) => {
+    const { data } = await deleteNaverAPI({ idNaver, token });
     return data;
   }
 );
@@ -103,33 +73,33 @@ const naversSlice = createSlice({
   extraReducers: builder => {
     builder
       // Get
-      .addCase(getNaversAPI.pending, state => {
+      .addCase(getNaversStore.pending, state => {
         state.isLoading = true;
       })
-      .addCase(getNaversAPI.fulfilled, (state, action) => {
+      .addCase(getNaversStore.fulfilled, (state, action) => {
         state.navers = action.payload;
         state.isLoading = false;
       })
-      .addCase(getNaversAPI.rejected, state => {
+      .addCase(getNaversStore.rejected, state => {
         state.isLoading = false;
       })
       //Post
-      .addCase(postNaverAPI.pending, state => {
+      .addCase(postNaverStore.pending, state => {
         state.isLoading = true;
       })
-      .addCase(
-        postNaverAPI.fulfilled,
-        (state, action: PayloadAction<responseNaver>) => {
-          state.navers.push(action.payload);
-          state.isLoading = false;
-        }
-      )
+      .addCase(postNaverStore.fulfilled, (state, action) => {
+        state.navers.push(action.payload);
+        state.isLoading = false;
+      })
+      .addCase(postNaverStore.rejected, state => {
+        state.isLoading = false;
+      })
       //Put
-      .addCase(putNaverAPI.pending, state => {
+      .addCase(putNaverStore.pending, state => {
         state.isLoading = true;
       })
       .addCase(
-        putNaverAPI.fulfilled,
+        putNaverStore.fulfilled,
         (state, action: PayloadAction<responseNaver>) => {
           state.navers = state.navers.filter(
             naver => naver.id !== action.payload.id
@@ -138,21 +108,20 @@ const naversSlice = createSlice({
           state.isLoading = false;
         }
       )
-      .addCase(putNaverAPI.rejected, (state, action) => {
-        console.log(action);
+      .addCase(putNaverStore.rejected, state => {
         state.isLoading = false;
       })
       //Delete
-      .addCase(deleteNaverAPI.pending, state => {
+      .addCase(deleteNaverStore.pending, state => {
         state.isLoading = true;
       })
-      .addCase(deleteNaverAPI.fulfilled, (state, action) => {
+      .addCase(deleteNaverStore.fulfilled, (state, action) => {
         state.navers = state.navers.filter(
           naver => naver.id !== action.meta.arg.idNaver
         );
         state.isLoading = false;
       })
-      .addCase(deleteNaverAPI.rejected, state => {
+      .addCase(deleteNaverStore.rejected, state => {
         state.isLoading = false;
       });
   },

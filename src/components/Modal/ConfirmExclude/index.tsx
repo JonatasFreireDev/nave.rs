@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { deleteNaverAPI } from '../../../store/navers.store';
-import { useAppSelector, useAppDispatch } from '../../../hooks/reduxHook';
+import { deleteNaverStore } from '../../../store/navers.store';
+import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHook';
 import { useModal } from '../../../hooks/ModalContext';
 import ModalInfo from '../Info';
 import * as S from './styles';
@@ -11,13 +11,13 @@ interface IModalProps {
 }
 
 const ConfirmeExclude: React.FC<IModalProps> = ({ idNaver }) => {
-  const token = useAppSelector(state => state.user.data?.token);
+  const token = useAppSelector(state => state.user.data?.token!);
   const dispatch = useAppDispatch();
   const { closeModal, setContentModal } = useModal();
 
   const handleDeleteNaver = useCallback(async () => {
     try {
-      await dispatch(deleteNaverAPI({ idNaver, token }))
+      await dispatch(deleteNaverStore({ idNaver, token }))
         .then(unwrapResult)
         .then(() => {
           setContentModal(

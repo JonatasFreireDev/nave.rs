@@ -17,7 +17,6 @@ export const Content = styled.section`
   position: absolute;
   background: ${props => props.theme.theme.mainTheme};
   border-radius: 10px;
-  padding: 30px;
   opacity: 1 !important;
   min-height: 200px;
   width: 80%;

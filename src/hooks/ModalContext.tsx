@@ -39,6 +39,7 @@ const ModalProvider: React.FC = ({ children }) => {
 
   const setContentModal = useCallback((contentRecive: ReactNode) => {
     setContent(contentRecive);
+    openModal();
   }, []);
 
   const statusModal = status.isOpend;

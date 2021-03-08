@@ -3,6 +3,7 @@ import Button from '../../Button';
 import { appearFromTop } from '../../../styles/keyframs';
 
 export const Container = styled.div`
+  padding: 30px;
   animation: ${appearFromTop} 0.3s;
 
   header {
