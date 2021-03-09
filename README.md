@@ -1,46 +1,60 @@
-# Getting Started with Create React App
+<p align="center">
+  <img src="/src/assets/logo.svg" alt="logo" title="logo"  width="50%">
+</p>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Navedex
 
-## Available Scripts
+Foi um teste realizado para a empresa Nave
 
-In the project directory, you can run:
+O intuito era fazer uma tela de login, e após o usuario logar, ter acesso aos navers, criação, edição e remoção dos mesmos utilizando navegações e modal.
 
-### `yarn start`
+[Desafio Front End](https://github.com/naveteam/front-end-challenge).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Experiência
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+O teste foi passado para mim no dia 03/03, e hoje, 08/03 estou entregando. Foi, de certa forma, bem desafiador entregar tudo o que foi pedido em tão pouco tempo, manter o código estruturado, limpo e o mais agradável possível, deixar o layout no padrão proposto, tentar adicionar coisas que agregassem valor ao App e ainda estudar coisas novas.
 
-### `yarn test`
+Experimentei pela primeira vez utilizar o redux toolkit, o que foi fantástico, está muito mais fácil e escalável do que antes. Porem o uso do context para um app simples como esse, é muito mais simples e fácil de utilizar
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Já tinha alguns componentes prontos, porem a maior parte do código foi escrito do zero. Foi bacana pensar em como desenvolver um sistema de Login e Modal e como componentizar vários trechos de códigos repetidos. Peguei um modulo que achei no google para utilizar modal, porém, em determinado ponto, vi que não ia dar certo e resolvi reescrever todo o código e implementar o meu próprio modal, o que deu certo, porem acredito que ficou um pouco pesado.
 
-### `yarn build`
+Há algumas melhorias para fazer, como tipagens do typescript em algumas funções, melhorar o tratamento de erros na aplicação, e algumas outras coisas. Mas em geral, fiquei satisfeito com o resultado e todo aprendizado que adquiri com o teste
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Tecnologias
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+As principais técnologias utilizadas foram:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- React
+- Typescript
 
-### `yarn eject`
+Principais Bibliotecas:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- Redux
+- Redux Toolkit
+- Unform
+- Styled-Components
+- Axios
+- React Router Dom
+- Yup
+- Date-fns
+- Eslint
+- Prettier
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Instalação e Execção
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Para executar esse projeto em sua máquina, é necessario ter instalado o `node` e o `yarn`
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Após fazer o download do repositório e descompactar em uma pasta, abra um terminal no diretório onde foi desconpactado, e execute o seguinte comando:
 
-## Learn More
+```sh
+$ yarn
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Este comando fará com que as dependencias do projeto sejam instaladas.
+Agora, basta executar o seguinte comando:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```sh
+$ yarn start
+```
+
+Uma janela se abrirá no seu navegador, caso não aconteça, acesseo seguinte link `http://localhost:3000/`
